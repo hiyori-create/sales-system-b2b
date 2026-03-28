@@ -73,6 +73,7 @@ a { text-decoration: none; color: inherit; }
   transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
   box-shadow: 0 4px 20px rgba(201,168,76,0.35);
 }
+.btn-gold br { display: none; }
 .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(201,168,76,0.45); }
 .btn-ghost {
   display: inline-flex; align-items: center; gap: 8px;
@@ -175,6 +176,7 @@ a { text-decoration: none; color: inherit; }
 
 .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: stretch; }
 .hero-right { display: flex; flex-direction: column; gap: 16px; justify-content: flex-end; padding-bottom: 40px; }
+.hero-right-pc { display: flex; } /* PC: 表示。モバイルでは @media内で none に */
 .hero-metric {
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(201,168,76,0.25);
@@ -214,17 +216,41 @@ a { text-decoration: none; color: inherit; }
 .logo-band {
   background: #EEF1F5;
   border-bottom: 1px solid #DDE1E9;
-  padding: 40px 0 36px;
+  padding: 40px 0;
 }
-.logo-band-label { text-align: center; font-size: 0.78rem; color: #6B7280; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px; font-weight: 500; }
-.logo-row { display: flex; justify-content: center; align-items: center; gap: 0; flex-wrap: wrap; }
+.logo-band-label {
+  text-align: center;
+  font-size: 0.72rem; color: #9CA3AF;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 28px; font-weight: 500;
+}
+.logo-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0;
+  max-width: 1000px;
+  margin: 0 auto;
+}
 .logo-item {
   display: flex; align-items: center; justify-content: center;
-  padding: 10px 36px; border-right: 1px solid #CDD2DC;
-  font-size: 0.84rem; font-weight: 600; color: #4B5563; letter-spacing: 0.08em;
+  padding: 0 36px;
+  font-size: 0.78rem; font-weight: 500; color: #6B7280;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  border: none;
+  border-right: 1px solid #C8CDD6;
+  text-align: center;
   white-space: nowrap;
 }
-.logo-item:last-child { border-right: none; }
+.logo-item:last-child {
+  border-right: none;
+}
+/* 5枚目のgrid-column指定をPC版では無効化 */
+.logo-item[style*="grid-column"] {
+  grid-column: unset !important;
+}
 
 /* ─── PAIN ─── */
 .pain-section {
@@ -240,7 +266,9 @@ a { text-decoration: none; color: inherit; }
   margin-bottom: 28px; letter-spacing: 0.03em;
 }
 
-.check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 36px; }
+.pain-alert .pain-alert-text br { display: none; }
+.check-grid { display: grid;
+ grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 36px; }
 .check-card {
   display: flex; gap: 14px; align-items: flex-start;
   padding: 18px 20px; border: 1px solid var(--gray-200);
@@ -507,6 +535,15 @@ a { text-decoration: none; color: inherit; }
   align-items: flex-start; gap: 10px;
 }
 .flow-cta-reassure { display: flex; flex-wrap: wrap; gap: 20px; }
+.flow-reassure-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.78rem; color: var(--gray-400); font-weight: 400;
+}
+.flow-reassure-item::before {
+  content: '✓';
+  color: var(--gold); font-weight: 700; font-size: 0.8rem;
+  flex-shrink: 0;
+}
 
 /* ─── FAQ ─── */
 .faq-section { padding: 96px 0; background: var(--white); }
@@ -587,6 +624,7 @@ a { text-decoration: none; color: inherit; }
   font-size: 0.95rem; font-weight: 700; letter-spacing: 0.04em;
   transition: all var(--transition); box-shadow: 0 4px 20px rgba(201,168,76,0.3);
 }
+.form-submit span { display: inline; }
 .form-submit:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(201,168,76,0.45); }
 .form-notes { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; }
 .form-note { font-size: 0.75rem; color: rgba(255,255,255,0.45); display: flex; align-items: center; gap: 6px; }
@@ -652,7 +690,8 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
   .faq-item, .cta-inner { max-width: 100%; box-sizing: border-box; }
 
   /* ─── NAV ─── */
-  .nav { padding: 0 16px; height: 60px; }
+  /* !important はスクロール時のJS inline style上書きに対抗するために必要 */
+  .nav { padding: 0 16px !important; height: 60px !important; }
   .nav-links, .nav-cta { display: none; }
   .nav-mobile {
     display: block; background: var(--gold); color: var(--navy);
@@ -662,63 +701,83 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
   }
 
   /* ─── HERO ─── */
-  .hero { padding: 72px 0 56px; min-height: auto; }
+  /* スマホFV：1画面に収まるよう余白・フォント・CTAを最適化 */
+  .hero { padding: 88px 0 72px; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; }
+  /* 背景オーバーレイをモバイルで濃くする */
+  .hero-overlay {
+    background: linear-gradient(
+      160deg,
+      rgba(10,15,30,0.88) 0%,
+      rgba(10,15,30,0.80) 50%,
+      rgba(10,15,30,0.70) 100%
+    ) !important;
+  }
   /* ヒーロー内fade-inはJSに依存せず即表示（Observerが発火しない問題を回避） */
   .hero .fade-in { opacity: 1 !important; transform: translateY(0) !important; }
   .hero-inner {
     grid-template-columns: 1fr !important;
-    gap: 28px;
+    gap: 0;
     align-items: flex-start;
   }
+  /* PC用右カラム（+38%指標）はモバイルで非表示 */
+  .hero-right-pc { display: none !important; }
+
+  .hero-target {
+    font-size: 0.72rem;
+    margin-bottom: 20px;
+  }
   .hero-title {
-    font-size: clamp(1.45rem, 6vw, 1.8rem) !important;
+    font-size: clamp(1.7rem, 7.5vw, 2.2rem) !important;
     word-break: keep-all;
-    margin-bottom: 14px;
-    line-height: 1.35;
+    margin-bottom: 20px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
   }
   .hero-title span { white-space: normal !important; }
-  .hero-target { font-size: 0.72rem; }
-  .hero-sub { font-size: 0.9rem; margin-bottom: 20px; line-height: 1.7; }
+  .hero-sub {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.8);
+    font-weight: 500;
+    margin-bottom: 36px;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+  }
   .hero-actions {
     flex-direction: column !important;
-    gap: 12px;
+    gap: 0;
     align-items: stretch;
     width: 100%;
   }
-  /* ① btn-gold: inline-flex→flex に変更してテキストが親幅内で折り返すようにする */
+  /* CTAボタン：60px以上・大きくインパクトを出す */
+  .hero-actions .btn-gold {
+    display: flex !important;
+    width: 100% !important;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px !important;
+    font-size: 1rem !important;
+    min-height: 64px !important;
+    box-sizing: border-box;
+    word-break: keep-all;
+    text-align: center;
+    line-height: 1.4;
+    border-radius: 8px;
+    letter-spacing: 0.02em;
+    box-shadow: 0 6px 28px rgba(201,168,76,0.5) !important;
+  }
+  /* hero全体のbtn-gold（上記以外）は通常サイズ */
   .btn-gold {
     display: flex !important;
     width: 100% !important;
     justify-content: center;
     padding: 14px 16px !important;
-    font-size: 0.85rem !important;
+    font-size: 0.88rem !important;
     min-height: 52px;
     box-sizing: border-box;
     word-break: keep-all;
     text-align: center;
     line-height: 1.5;
   }
-  .btn-ghost.btn-sub {
-    width: 100% !important;
-    justify-content: center;
-    padding: 14px 20px !important;
-    font-size: 0.88rem !important;
-    min-height: 48px;
-  }
-  .hero-right {
-    flex-direction: column !important;
-    gap: 16px;
-    padding-bottom: 0;
-    width: 100%;
-  }
-  .hero-metric {
-    margin-left: 0 !important;
-    padding: 20px 20px;
-    width: 100%;
-  }
-  .hero-metric-num { font-size: 3.8rem; }
-  .hero-pills { flex-wrap: wrap; gap: 8px; }
-  .hero-pill { white-space: nowrap; font-size: 0.75rem; }
 
   /* ─── SECTION 共通 ─── */
   .section-title { font-size: clamp(1.3rem, 5vw, 1.6rem) !important; }
@@ -768,9 +827,33 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
     min-width: unset !important;
     gap: 10px;
   }
-  .metric-card { padding: 18px 12px; }
-  .metric-card.hero-metric { grid-column: span 2 !important; }
-  .metric-num { font-size: 2rem; }
+  /* 全カード統一 */
+  .metric-card {
+    padding: 20px 12px;
+    border: 1px solid #DDE1E9;
+    border-radius: var(--radius-md);
+    min-height: 0;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center;
+  }
+  /* hero-metric: スパン解除・同サイズ・ゴールドアクセントのみ */
+  .metric-card.hero-metric {
+    grid-column: span 1 !important;
+    border-color: rgba(201,168,76,0.45);
+    box-shadow: 0 2px 10px rgba(201,168,76,0.12);
+  }
+  /* 数字の色統一：基本はnav、hero-metricのみgold */
+  .metric-num { font-size: 2rem; color: var(--navy); }
+  .metric-card.hero-metric .metric-num { color: var(--gold); }
+  /* 青を上書き */
+  .metric-num[style*="color"] { color: var(--navy) !important; }
+  .metric-label { font-size: 0.65rem; }
+  .metric-meaning { font-size: 0.62rem; }
+  /* 最後の1枚（5枚目）を中央寄せ */
+  .metric-card:last-child:nth-child(odd) {
+    grid-column: span 2;
+  }
   .case-grid { grid-template-columns: 1fr !important; }
   .results-cta-row {
     flex-direction: column !important;
@@ -782,7 +865,8 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
   .flow-section { padding: 56px 0 60px; }
   .flow-cta-wrap { align-items: stretch; }
   .flow-cta-wrap .btn-gold { width: 100%; justify-content: center; }
-  .flow-cta-reassure { flex-direction: column; gap: 10px; }
+  .flow-cta-reassure { flex-direction: column; gap: 8px; }
+  .flow-reassure-item { font-size: 0.75rem; }
   .step-header { flex-wrap: wrap; gap: 6px; }
 
   /* ─── FAQ ─── */
@@ -806,17 +890,44 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
     width: 100%;
   }
   .form-submit {
-    padding: 16px;
-    font-size: 1rem;
+    padding: 16px 20px;
+    font-size: 0.82rem;
+    line-height: 1.6;
     min-height: 52px;
     width: 100%;
+    box-sizing: border-box;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
+  .form-submit span { display: block; }
   .form-notes { gap: 10px; flex-direction: column; align-items: flex-start; }
   .form-ok-badge { font-size: 0.8rem; padding: 10px 14px; }
 
   /* ─── LOGO BAND ─── */
-  .logo-band .container { padding: 0; }
-  .logo-item { padding: 10px 14px; font-size: 0.72rem; white-space: nowrap; }
+  .logo-band { padding: 48px 0 44px; }
+  .logo-band-label {
+    margin-bottom: 32px;
+    font-size: 0.68rem;
+  }
+  .logo-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 0;
+    max-width: 100%;
+    padding: 0 20px;
+    flex-wrap: unset;
+  }
+  .logo-item {
+    padding: 14px 12px;
+    font-size: 0.68rem;
+    line-height: 2.0;
+    letter-spacing: 0.04em;
+    white-space: normal;
+    border: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+  }
 
   /* ─── FOOTER ─── */
   footer {
@@ -830,11 +941,19 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
   /* ─── hero-glow: モバイルでは非表示（overflow:hiddenで制御済みだが念のため） ─── */
   .hero-glow, .hero-glow2 { display: none; }
 
-  /* ─── bridge-box内ボタン: base CSSのwhite-space:nowrapを上書き ─── */
-  .bridge-box .btn-gold {
-    white-space: normal !important;
-    flex-shrink: 1;
+  /* ─── btn-gold: モバイル全幅・折り返し対応 ─── */
+  .btn-gold {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 16px 20px;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    text-align: center;
+    white-space: normal;
+    word-break: break-word;
   }
+  .btn-gold br { display: inline; }
 
   /* ─── form-speed-badge: モバイルで全幅表示 ─── */
   .form-speed-badge {
@@ -850,14 +969,17 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
   .faq-icon { min-width: 26px; width: 26px !important; height: 26px; flex-shrink: 0; }
   .check-icon { min-width: 20px; width: 20px !important; flex-shrink: 0; }
 
-  /* ─── pain-alert: 「!」ドットが分離しないよう保護 ─── */
+  /* ─── pain-alert ─── */
   .pain-alert {
     display: flex;
-    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 8px;
     width: 100%;
     box-sizing: border-box;
   }
-  .pain-alert-dot { flex-shrink: 0; }
+  .pain-alert-dot { flex-shrink: 0; margin-top: 1px; }
+  .pain-alert .pain-alert-text br { display: inline; }
+  .pain-alert .pain-alert-text { line-height: 1.85; }
 
   /* ─── form-ok-badge ─── */
   .form-ok-badge {
@@ -897,16 +1019,16 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
       <div class="fade-in">
         <div class="hero-target">中小企業の営業責任者・経営者の方へ</div>
         <h1 class="hero-title">
-          <span style="white-space:nowrap">トップ営業がいなくても、</span><br>
-          <span style="white-space:nowrap"><em>売れる仕組み</em>を社内に残す。</span>
+          <span style="white-space:nowrap">トップ営業がいなくても</span><br>
+          <span style="white-space:nowrap"><em>売れる仕組み</em>を社内に残す</span>
         </h1>
-        <p class="hero-sub">売れる仕組みを設計し、最短2週間で現場が動き始めます。</p>
+        <p class="hero-sub">最短2週間で成果が出る仕組み</p>
         <div class="hero-actions">
-          <a href="#contact" class="btn-gold">売上が伸びない原因を30分で特定する（無料）→</a>
-          <a href="#service" class="btn-ghost btn-sub">サービス詳細を見る</a>
+          <a href="#contact" class="btn-gold">【30分で原因がわかる】無料相談する →</a>
         </div>
       </div>
-      <div class="hero-right fade-in" style="animation-delay:0.15s">
+      <!-- PC表示用の右カラム（モバイルでは非表示） -->
+      <div class="hero-right fade-in hero-right-pc" style="animation-delay:0.15s">
         <div class="hero-metric">
           <div class="hero-metric-num">+38<span style="font-size:2.5rem">%</span></div>
           <div class="hero-metric-label">成約率 平均改善</div>
@@ -936,7 +1058,7 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
       <div class="logo-item">〇〇工業株式会社</div>
       <div class="logo-item">〇〇パートナーズ</div>
       <div class="logo-item">株式会社〇〇HD</div>
-      <div class="logo-item">〇〇ソリューションズ</div>
+      <div class="logo-item" style="grid-column: 1 / -1;">〇〇ソリューションズ</div>
     </div>
   </div>
 </div>
@@ -950,7 +1072,7 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
     </div>
     <div class="pain-alert fade-in">
       <span class="pain-alert-dot">!</span>
-      1つでも当てはまる方は、今すぐ改善が必要なサインです
+      <span class="pain-alert-text">1つでも当てはまる方は、<br>今すぐ改善が必要なサインです！</span>
     </div>
     <div class="check-grid fade-in">
       <div class="check-card">
@@ -991,7 +1113,7 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
           <span class="bridge-stat">最短14日で稼働</span>
         </div>
       </div>
-      <a href="#contact" class="btn-gold">売上が伸びない原因を30分で特定する（無料）→</a>
+      <a href="#contact" class="btn-gold">売上が伸びない原因を<br>30分で無料診断する →</a>
     </div>
   </div>
 </section>
@@ -1039,7 +1161,7 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
     </div>
     <div class="service-cta-row fade-in">
       <p class="service-cta-note">「どこから手をつければいいか分からない」状態でも大丈夫。まずヒアリングから始めます。</p>
-      <a href="#contact" class="btn-gold" style="margin-top:8px">売上が伸びない原因を30分で特定する（無料）→</a>
+      <a href="#contact" class="btn-gold" style="margin-top:8px">売上が伸びない原因を<br>30分で無料診断する →</a>
     </div>
   </div>
 </section>
@@ -1082,7 +1204,7 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
         <h4>良さそうと感じたなら、この30分が分岐点になります。</h4>
         <p>費用ゼロ・義務ゼロ。まず話すだけで構いません。</p>
       </div>
-      <a href="#contact" class="btn-gold" style="flex-shrink:0;white-space:nowrap">売上が伸びない原因を30分で特定する（無料）→</a>
+      <a href="#contact" class="btn-gold" style="flex-shrink:0">売上が伸びない原因を<br>30分で無料診断する →</a>
     </div>
   </div>
 </div>
@@ -1146,7 +1268,7 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
     </div>
     <div class="results-cta-row fade-in">
       <p class="results-cta-note">「自社でも同じ結果が出るのか」——30分で貴社の状況を分析し、改善ポイントをお伝えします。</p>
-      <a href="#contact" class="btn-gold">売上が伸びない原因を30分で特定する（無料）→</a>
+      <a href="#contact" class="btn-gold">売上が伸びない原因を<br>30分で無料診断する →</a>
     </div>
   </div>
 </section>
@@ -1195,11 +1317,12 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
       </div>
     </div>
     <div class="flow-cta-wrap fade-in">
-      <a href="#contact" class="btn-gold">売上が伸びない原因を30分で特定する（無料）→</a>
+      <a href="#contact" class="btn-gold">売上が伸びない原因を<br>30分で無料診断する →</a>
       <div class="flow-cta-reassure">
-        <span class="flow-reassure-item"><strong>完全無料</strong>・営業電話なし</span>
-        <span class="flow-reassure-item"><strong>2営業日以内</strong>に返信</span>
-        <span class="flow-reassure-item"><strong>検討段階</strong>でも歓迎</span>
+        <span class="flow-reassure-item">完全無料</span>
+        <span class="flow-reassure-item">営業電話なし</span>
+        <span class="flow-reassure-item">2営業日以内に返信</span>
+        <span class="flow-reassure-item">検討段階でも歓迎</span>
       </div>
     </div>
   </div>
@@ -1310,7 +1433,7 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
           </p>
         </div>
         <button class="form-submit" onclick="alert('送信しました。2営業日以内にご連絡します。')">
-          売上が伸びない原因を30分で特定する（無料）→
+          <span>売上が伸びない原因を</span><span>30分で無料診断する →</span>
         </button>
         <div class="form-ok-badge">
           <strong>検討段階・情報収集中でも大歓迎です。</strong>まず話すだけで構いません。
@@ -1358,11 +1481,24 @@ document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 // Nav scroll shrink
 window.addEventListener('scroll', () => {
   const nav = document.getElementById('nav');
+  const isMobile = window.innerWidth <= 768;
   if (window.scrollY > 60) {
-    nav.style.height = '58px';
-    nav.style.padding = '0 40px';
+    nav.style.height = isMobile ? '56px' : '58px';
+    // モバイルではpaddingをCSSに任せる（インラインで上書きしない）
+    if (!isMobile) {
+      nav.style.padding = '0 40px';
+    }
   } else {
-    nav.style.height = '68px';
+    nav.style.height = isMobile ? '60px' : '68px';
+    nav.style.padding = '';  // インラインstyleをリセット
+  }
+});
+
+// リサイズ時もインラインstyleをクリア（横向き切り替えなど）
+window.addEventListener('resize', () => {
+  const nav = document.getElementById('nav');
+  if (window.innerWidth <= 768) {
+    nav.style.padding = '';
   }
 });
 </script>
