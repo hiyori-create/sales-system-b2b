@@ -703,18 +703,21 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
   /* ─── HERO ─── */
   /* スマホFV：1画面に収まるよう余白・フォント・CTAを最適化 */
   .hero {
-    padding: 88px 0 72px; min-height: 100svh;
-    display: flex; flex-direction: column; justify-content: center;
-    background-position: 72% center !important;
+    padding: 0 0 56px;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background-position: 72% top !important;
   }
-  /* 背景オーバーレイ：左（文字エリア）は濃く、右（人物エリア）は薄く */
+  /* 下半分（テキストエリア）を濃く、上半分（顔エリア）は明るく残す */
   .hero-overlay {
     background: linear-gradient(
-      90deg,
-      rgba(10,15,30,0.97) 0%,
-      rgba(10,15,30,0.92) 40%,
-      rgba(10,15,30,0.65) 65%,
-      rgba(10,15,30,0.20) 100%
+      180deg,
+      rgba(10,15,30,0.15) 0%,
+      rgba(10,15,30,0.30) 35%,
+      rgba(10,15,30,0.82) 58%,
+      rgba(10,15,30,0.96) 100%
     ) !important;
   }
   /* ヒーロー内fade-inはJSに依存せず即表示（Observerが発火しない問題を回避） */
@@ -723,32 +726,30 @@ footer p { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
     grid-template-columns: 1fr !important;
     gap: 0;
     align-items: flex-start;
+    padding-top: 180px;
   }
   /* PC用右カラム（+38%指標）はモバイルで非表示 */
   .hero-right-pc { display: none !important; }
 
   .hero-target {
     font-size: 0.72rem;
-    margin-bottom: 20px;
-    max-width: 62%;
+    margin-bottom: 16px;
   }
   .hero-title {
     font-size: clamp(1.55rem, 6.5vw, 2rem) !important;
     word-break: keep-all;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     line-height: 1.35;
     letter-spacing: -0.01em;
-    max-width: 62%;
   }
   .hero-title span { white-space: normal !important; }
   .hero-sub {
     font-size: 0.9rem;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,0.85);
     font-weight: 500;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
     line-height: 1.6;
     letter-spacing: 0.02em;
-    max-width: 62%;
   }
   .hero-actions {
     flex-direction: column !important;
